@@ -19,8 +19,10 @@ Matrix matrix_multiply(Matrix* mat1, Matrix* mat2);
 Matrix dot_product(Matrix* mat1, Matrix* mat2);
 Matrix add_matrices(Matrix mat1, Matrix mat2);
 Matrix subtract_matrices(Matrix mat1, Matrix mat2);
+
 Matrix multiply_matrix_with_scaler(double scalar, Matrix mat2);
 Matrix matrix_transpose(Matrix mat);
 Matrix matrix_add_column_vector(Matrix mat, Matrix col);
+Matrix matrix_add_scaler(Matrix mat, double z);
 
 #endif

@@ -67,7 +67,6 @@ Matrix dot_product(Matrix *mat1, Matrix *mat2) {
     return mat;
 }
 
-//operator overload
 Matrix add_matrices(Matrix mat1, Matrix mat2) {
     if (mat1.rows != mat2.rows || mat1.cols != mat2.cols) {
         fprintf(stderr, "add_matrices: shape mismatch %dx%d + %dx%d\n",
@@ -146,4 +145,13 @@ Matrix matrix_add_column_vector(Matrix mat, Matrix col) {
     }
 
     return out;
+}
+
+Matrix matrix_add_scaler(Matrix mat, double z) {
+    for (int i = 0; i < mat.rows; i++) {
+        for (int j = 0; j < mat.cols; j++) {
+            mat.data[i * mat.cols + j] += z;
+        }
+    }
+    return mat;
 }
