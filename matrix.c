@@ -155,3 +155,29 @@ Matrix matrix_add_scaler(Matrix mat, double z) {
     }
     return mat;
 }
+
+// Like np.sum(mat, axis, keepdims=True):
+//   axis 0 -> sum down each column -> 1 x cols
+//   axis 1 -> sum across each row  -> rows x 1
+Matrix matrix_np_sum(Matrix *mat, int axis) {
+    if (axis != 0 && axis != 1) {
+        fprintf(stderr, "matrix_np_sum: axis must be 0 or 1, got %d\n", axis);
+        exit(EXIT_FAILURE);
+    }
+
+    Matrix out = (axis == 0) ? create_matrix(1, mat->cols)
+                             : create_matrix(mat->rows, 1);  // calloc -> starts at 0
+
+    for (int i = 0; i < mat->rows; i++) {
+        for (int j = 0; j < mat->cols; j++) {
+            double v = mat->data[i * mat->cols + j];
+            if (axis == 0) {
+                out.data[j] += v;   // column j total
+            } else {
+                out.data[i] += v;   // row i total
+            }
+        }
+    }
+
+    return out;
+}

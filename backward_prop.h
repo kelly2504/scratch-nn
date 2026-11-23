@@ -19,4 +19,4 @@ typedef struct BackwardProp {
 
 Matrix one_hot(const Matrix* labels, int num_classes);
 BackwardProp backward_propagation(ForwardProp* params, Matrix X, Matrix Y);
-void update_params();
+ForwardProp update_params(ForwardProp* params, BackwardProp* derivatives, double alpha);

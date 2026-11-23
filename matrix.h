@@ -24,5 +24,7 @@ Matrix multiply_matrix_with_scaler(double scalar, Matrix mat2);
 Matrix matrix_transpose(Matrix mat);
 Matrix matrix_add_column_vector(Matrix mat, Matrix col);
 Matrix matrix_add_scaler(Matrix mat, double z);
+//np.sum
+Matrix matrix_np_sum(Matrix *mat, int axis);
 
 #endif
