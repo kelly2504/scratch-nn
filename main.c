@@ -22,11 +22,15 @@ int main(void) {
     //temporary matrix of 10 digits to predict 10 digits
     Matrix m1 = matrix_test();
 
-    time_t time1 = time(NULL);
-    matrix_transpose(m1);
-    time_t time2 = time(NULL);
+    // clock() measures CPU time with sub-second resolution (time() only counts whole seconds)
+    clock_t start = clock();
+    Matrix m1_t = matrix_transpose(m1);
+    clock_t end = clock();
 
-    printf("time taken: %f", difftime(time2,time1));
+    printf("time taken: %f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+    free(m1.data);
+    free(m1_t.data);
     return 0;
 }
 
@@ -41,7 +45,9 @@ Matrix data_matrix() {
 }
 
 Matrix matrix_test() {
-    Matrix mat = create_matrix(100000, 100000);
+    // 100000x100000 would be 80 GB and overflows the int index in set_matrix_value.
+    // 5000x5000 doubles = 200 MB.
+    Matrix mat = create_matrix(5000, 5000);
     for (int i = 0; i < mat.rows; i++) {
         for (int j = 0; j < mat.cols; j++) {
             set_matrix_value(&mat, i, j, i*j);

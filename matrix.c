@@ -15,7 +15,8 @@ Matrix create_matrix(int rows, int cols) {
     mat.data = calloc((size_t)rows * (size_t)cols, sizeof(double));
     if (mat.data == NULL) {
         fprintf(stderr, "create_matrix: allocation of %dx%d failed\n", rows, cols);
-    } 
+        exit(EXIT_FAILURE);
+    }
     return mat;
 
 }
