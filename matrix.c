@@ -38,10 +38,12 @@ Matrix matrix_multiply(Matrix *mat1, Matrix *mat2) {
     }
     Matrix mat = create_matrix(mat1->rows, mat2->cols);
 
+    Matrix mat3 = matrix_transpose(*mat2);
+
     for (int i = 0; i < mat.rows; i++) {
         for (int j = 0; j < mat.cols; j++) {
             for (int k = 0; k < mat1->cols; k++) {
-                mat.data[i * mat.cols + j] += mat1->data[i * mat1->cols + k] * mat2->data[k * mat2->cols +j];
+                mat.data[i * mat.cols + j] += mat1->data[i * mat1->cols + k] * mat3.data[j * mat3.cols + k];
             }
         }
     }
