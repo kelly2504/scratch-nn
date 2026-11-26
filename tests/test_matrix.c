@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 #include "../matrix.h"
 
 static int failures = 0;
@@ -41,10 +42,53 @@ static void test_elementwise_multiply(void) {
     free(a.data); free(b.data); free(c.data);
 }
 
+static void test_gemm_speed() {
+    int num_tests = 100;
+    int mat_size = 250;
+    double times[num_tests];
+    int it = 0;
+
+    Matrix mat1 = create_matrix(mat_size, mat_size);
+    for (int x = 0; x < mat1.cols; x++) {
+        for (int y = 0; y < mat1.rows; y++) {
+            set_matrix_value(&mat1, x, y, 1.0);
+        }
+    }
+
+    Matrix mat2 = create_matrix(mat_size, mat_size);
+    for (int x = 0; x < mat2.cols; x++) {
+        for (int y = 0; y < mat2.rows; y++) {
+            set_matrix_value(&mat2, x, y, 1.0);
+        }
+    }
+
+
+    for (int i = 0; i < num_tests; i++) {
+        clock_t start_time =  clock();
+
+        Matrix ret = matrix_multiply(&mat1, &mat2);
+
+        times[it++] = (clock() - start_time) / (float) CLOCKS_PER_SEC;
+
+        free(ret.data);
+    }
+
+    free(mat1.data);
+    free(mat2.data);
+
+    double s = 0;
+    for (int i = 0; i < num_tests; i++) {
+        s += times[i];
+    }
+
+    printf("av mult time = %f", s / num_tests);
+}
+
 int main(void) {
     test_transpose();
     test_subtract();
     test_elementwise_multiply();
+    test_gemm_speed();
     if (failures) fprintf(stderr, "%d check(s) failed\n", failures);
     return failures ? 1 : 0;
 }
