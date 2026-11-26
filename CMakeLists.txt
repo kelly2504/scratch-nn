@@ -9,6 +9,7 @@ add_library(nncore
     matrix.c
     forward_prop.c
     backward_prop.c
+    metrics.c
 )
 
 target_include_directories(nncore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -31,3 +32,10 @@ add_executable(test_backward_prop tests/test_backward_prop.c)
 target_link_libraries(test_backward_prop PRIVATE nncore)
 add_test(NAME backward_prop COMMAND test_backward_prop)
 
+add_executable(test_metrics tests/test_metrics.c)
+target_link_libraries(test_metrics PRIVATE nncore)
+add_test(NAME metrics COMMAND test_metrics)
+
+add_executable(test_forward_prop tests/test_forward_prop.c)
+target_link_libraries(test_forward_prop PRIVATE nncore)
+add_test(NAME forward_prop COMMAND test_forward_prop)

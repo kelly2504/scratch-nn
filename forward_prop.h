@@ -19,8 +19,9 @@ typedef struct ForwardProp {
 } ForwardProp;
 #endif
 
-void init_parameters(ForwardProp* params, int matrix_size, int target_size);
-void forward_propagation(ForwardProp* params, Matrix X, int input_size, int output_size);
+ForwardProp* init_parameters(ForwardProp* params, int matrix_size, int target_size);
+ForwardProp* forward_propagation(ForwardProp* params, Matrix X, int input_size, int output_size);
+void free_forward_prop(ForwardProp* params);
 double RELU(double x);
-Matrix softmax(Matrix input, Matrix output, int input_size, int output_size);
+Matrix softmax(Matrix input);
 Matrix relu_matrix(Matrix* mat);

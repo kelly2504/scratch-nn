@@ -182,3 +182,21 @@ Matrix matrix_np_sum(Matrix *mat, int axis) {
 
     return out;
 }
+// Like A * B in numpy (Hadamard product): both matrices must have the same
+// shape, and each output entry is the product of the entries at that position.
+// Not the same as matrix_multiply / dot_product (A.dot(B)).
+Matrix matrix_elementwise_multiply(Matrix *mat1, Matrix *mat2) {
+    if (mat1->rows != mat2->rows || mat1->cols != mat2->cols) {
+        fprintf(stderr, "matrix_elementwise_multiply: shape mismatch %dx%d * %dx%d\n",
+                mat1->rows, mat1->cols, mat2->rows, mat2->cols);
+        exit(EXIT_FAILURE);
+    }
+
+    Matrix out = create_matrix(mat1->rows, mat1->cols);
+    int n = mat1->rows * mat1->cols;
+    for (int i = 0; i < n; i++) {
+        out.data[i] = mat1->data[i] * mat2->data[i];
+    }
+
+    return out;
+}

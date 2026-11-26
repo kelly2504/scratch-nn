@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "backward_prop.h"
 #include "matrix.h"
 #include "forward_prop.h"
+#include "metrics.h"
 
 #define MAX_LINE_SIZE 8192
 
@@ -15,30 +17,69 @@ int read_mnist();
 void read_file(FILE* filename);
 Matrix data_matrix();
 Matrix matrix_test();
+ForwardProp* gradient_descent(Matrix X, Matrix Y, int iterations, double alpha);
 
 int main(void) {
     // int read = read_mnist();
 
-    //temporary matrix of 10 digits to predict 10 digits
-    Matrix m1 = matrix_test();
+    // //temporary matrix of 10 digits to predict 10 digits
+    // Matrix m1 = matrix_test();
 
-    // clock() measures CPU time with sub-second resolution (time() only counts whole seconds)
-    clock_t start = clock();
-    Matrix m1_t = matrix_transpose(m1);
-    clock_t end = clock();
+    // // clock() measures CPU time with sub-second resolution (time() only counts whole seconds)
+    // clock_t start = clock();
+    // Matrix m1_t = matrix_transpose(m1);
+    // clock_t end = clock();
 
-    printf("time taken: %f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
+    // printf("time taken: %f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
 
-    free(m1.data);
-    free(m1_t.data);
+    // free(m1.data);
+    // free(m1_t.data);
+
+    Matrix X = data_matrix();
+    Matrix y = create_matrix(1, 10);
+    for (int i = 0; i < 10; i++) {
+        y.data[i] = i;
+    }
+
+    ForwardProp *prop = gradient_descent(X, y, 10, 0.01);
+
+    free_forward_prop(prop);
+    free(prop);
+    free(X.data);
+    free(y.data);
     return 0;
+}
+
+ForwardProp* gradient_descent(Matrix X, Matrix Y, int iterations, double alpha) {
+    // the struct needs real memory before init_parameters writes into it
+    ForwardProp *forward_prop = malloc(sizeof(ForwardProp));
+    if (forward_prop == NULL) {
+        fprintf(stderr, "gradient_descent: allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    init_parameters(forward_prop, X.rows, 10);
+
+    for (int i = 0; i < iterations; i++) {
+        forward_prop = forward_propagation(forward_prop, X, X.rows, Y.rows);
+        BackwardProp backprop = backward_propagation(forward_prop, X, Y);
+
+        forward_prop = update_params(forward_prop, &backprop, alpha);
+        free_backward_prop(&backprop);
+
+        // a2 holds this epoch's softmax output from the forward pass
+        double loss = cross_entropy_loss(&forward_prop->a2, &Y);
+        double accuracy = get_accuracy(&forward_prop->a2, &Y);
+        printf("epoch %4d | loss: %.4f | accuracy: %.2f%%\n", i + 1, loss, accuracy * 100.0);
+    }
+
+    return forward_prop;
 }
 
 //make a 1d matrix with 10 digits 0 to 9
 Matrix data_matrix() {
-    Matrix mat = create_matrix(10, 1);
+    Matrix mat = create_matrix(1, 10);
     for (int i = 0; i < 10; i++) {
-        set_matrix_value(&mat, i, 0, i);
+        set_matrix_value(&mat, 0, i, i/9.0);
     }
 
     return mat;

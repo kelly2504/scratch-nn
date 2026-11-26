@@ -26,9 +26,25 @@ static void test_subtract(void) {
     CHECK_NEAR(c.data[1], 2.0);
 }
 
+static void test_elementwise_multiply(void) {
+    Matrix a = create_matrix(2, 2), b = create_matrix(2, 2);
+    double av[] = {1, 2, 3, 4}, bv[] = {5, 6, 0, -1};
+    for (int i = 0; i < 4; i++) { a.data[i] = av[i]; b.data[i] = bv[i]; }
+
+    Matrix c = matrix_elementwise_multiply(&a, &b);
+    CHECK(c.rows == 2 && c.cols == 2);
+    CHECK_NEAR(c.data[0], 5.0);
+    CHECK_NEAR(c.data[1], 12.0);
+    CHECK_NEAR(c.data[2], 0.0);
+    CHECK_NEAR(c.data[3], -4.0);
+    CHECK_NEAR(a.data[0], 1.0);   // inputs unchanged
+    free(a.data); free(b.data); free(c.data);
+}
+
 int main(void) {
     test_transpose();
     test_subtract();
+    test_elementwise_multiply();
     if (failures) fprintf(stderr, "%d check(s) failed\n", failures);
     return failures ? 1 : 0;
 }

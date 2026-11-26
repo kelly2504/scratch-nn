@@ -26,5 +26,7 @@ Matrix matrix_add_column_vector(Matrix mat, Matrix col);
 Matrix matrix_add_scaler(Matrix mat, double z);
 //np.sum
 Matrix matrix_np_sum(Matrix *mat, int axis);
+//A * B in numpy (same shape, multiply matching entries)
+Matrix matrix_elementwise_multiply(Matrix *mat1, Matrix *mat2);
 
 #endif
