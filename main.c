@@ -11,6 +11,8 @@
 #include "metrics.h"
 
 #define MAX_LINE_SIZE 8192
+// how many predictions/labels to show on each epoch line
+#define MAX_PRINTED 10
 
 
 int read_mnist();
@@ -18,6 +20,7 @@ void read_file(FILE* filename);
 Matrix data_matrix();
 Matrix matrix_test();
 ForwardProp* gradient_descent(Matrix X, Matrix Y, int iterations, double alpha);
+void print_values(const char* label, const Matrix* values);
 
 int main(void) {
     // int read = read_mnist();
@@ -41,7 +44,7 @@ int main(void) {
         y.data[i] = i;
     }
 
-    ForwardProp *prop = gradient_descent(X, y, 10, 0.01);
+    ForwardProp *prop = gradient_descent(X, y, 5000, 0.5);
 
     free_forward_prop(prop);
     free(prop);
@@ -69,10 +72,29 @@ ForwardProp* gradient_descent(Matrix X, Matrix Y, int iterations, double alpha) 
         // a2 holds this epoch's softmax output from the forward pass
         double loss = cross_entropy_loss(&forward_prop->a2, &Y);
         double accuracy = get_accuracy(&forward_prop->a2, &Y);
-        printf("epoch %4d | loss: %.4f | accuracy: %.2f%%\n", i + 1, loss, accuracy * 100.0);
+        Matrix preds = get_predictions(&forward_prop->a2);
+
+        printf("epoch %4d | loss: %.4f | accuracy: %.2f%%", i + 1, loss, accuracy * 100.0);
+        print_values(" | pred: ", &preds);
+        print_values(" | actual: ", &Y);
+        printf("\n");
+
+        free(preds.data);
     }
 
     return forward_prop;
+}
+
+// Prints up to the first MAX_PRINTED values of a 1 x m (or m x 1) matrix as [a b c ...]
+void print_values(const char* label, const Matrix* values) {
+    int m = values->rows * values->cols;
+    int shown = m < MAX_PRINTED ? m : MAX_PRINTED;
+
+    printf("%s[", label);
+    for (int j = 0; j < shown; j++) {
+        printf(j == 0 ? "%d" : " %d", (int)values->data[j]);
+    }
+    printf(m > shown ? " ...]" : "]");
 }
 
 //make a 1d matrix with 10 digits 0 to 9
