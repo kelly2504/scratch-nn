@@ -43,8 +43,14 @@ static void test_elementwise_multiply(void) {
 }
 
 static void test_gemm_speed() {
-    int num_tests = 100;
-    int mat_size = 250;
+    /*
+    naive (as of 1774309dca7066cba7f894295ad2d6c82a2360bf) = 1.309098
+    transpose first (as of 949d9bb37550cdf35ebec24d878a491a95f60047) = 1.121513
+    
+    */
+
+    int num_tests = 20;
+    int mat_size = 500;
     double times[num_tests];
     int it = 0;
 
@@ -81,7 +87,7 @@ static void test_gemm_speed() {
         s += times[i];
     }
 
-    printf("av mult time = %f", s / num_tests);
+    printf("av mult time = %f\n", s / num_tests);
 }
 
 int main(void) {
